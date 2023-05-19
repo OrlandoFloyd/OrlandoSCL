@@ -1,0 +1,239 @@
+proceso en slc
+PROGRAM MyProject
+VAR
+    RawFlow: BOOL;
+    OnOven: BOOL;
+    FlowK_1_3: BOOL;
+    OnAdsorber: BOOL;
+    Flow_1_3: BOOL;
+    FlowFridge_1: BOOL;
+    OnFridge_1: BOOL;
+    FlowK_2: BOOL;
+    OnK_2: BOOL;
+    FlowK_3: BOOL;
+    OnStabilizer: BOOL;
+    FlowWarm: BOOL;
+    OnWarm: BOOL;
+    OnFridge_2: BOOL;
+    FlowFridge_2: BOOL;
+    FlowE_1: BOOL;
+    OnCompressor: BOOL;
+    OnPurge: BOOL;
+    FlowFridge: BOOL;
+    OnFridge: BOOL;
+    FlowE_2: BOOL;
+    OnSeparator: BOOL;
+    FlowOffset: BOOL;
+    Timer_1: TON;
+    Timer_2: TON;
+    Timer_3: TON;
+    Timer_5: TON;
+    Timer_6: TON;
+END_VAR
+
+// Network 1
+IF Start THEN
+    RawFlow := TRUE;
+ELSE
+    RawFlow := FALSE;
+END_IF;
+
+// Network 2
+IF Level_1 THEN
+    RawFlow := TRUE;
+    OnOven := FALSE;
+ELSE
+    OnOven := TRUE;
+    RawFlow := FALSE;
+END_IF;
+
+// Network 3
+IF Temperature_1 THEN
+    OnOven := TRUE;
+    FlowK_1_3 := FALSE;
+ELSE
+    FlowK_1_3 := TRUE;
+    OnOven := FALSE;
+END_IF;
+
+// Network 4
+IF Pressure_1 THEN
+    FlowK_1_3 := TRUE;
+    OnAdsorber := FALSE;
+ELSE
+    OnAdsorber := TRUE;
+    Flow_1_3 := FALSE;
+END_IF;
+
+// Network 5
+Timer_1(IN := NOT Timer_1.Q, PT := T#5S);
+IF Timer_1.Q THEN
+    OnAdsorber := TRUE;
+    FlowFridge_1 := FALSE;
+ELSE
+    FlowFridge_1 := TRUE;
+    OnAdsorber := FALSE;
+END_IF;
+
+// Network 6
+IF Pressure_2 THEN
+    FlowFridge_1 := TRUE;
+    OnFridge_1 := FALSE;
+ELSE
+    OnFridge_2 := TRUE;
+    FlowK_2 := FALSE;
+END_IF;
+
+// Network 7
+IF Temperature_2 THEN
+    FlowK_2 := TRUE;
+    OnK_2 := FALSE;
+ELSE
+    OnK_2 := TRUE;
+    FlowK_2 := FALSE;
+END_IF;
+
+// Network 8
+IF Level_2 THEN
+    OnK_2 := TRUE;
+    FlowK_3 := FALSE;
+ELSE
+    FlowK_3 := TRUE;
+    OnK_2 := FALSE;
+END_IF;
+
+// Network 9
+IF Temperature_3 THEN
+    FlowK_3 := TRUE;
+    OnStabilizer := FALSE;
+ELSE
+    OnStabilizer := TRUE;
+    FlowK_3 := FALSE;
+END_IF;
+
+// Network 10
+IF Pressure_3 THEN
+    OnStabilizer := TRUE;
+    FlowWarm := FALSE;
+ELSE
+    FlowWarm := TRUE;
+    OnStabilizer := FALSE;
+END_IF;
+
+// Network 11
+Timer_2(IN := NOT Timer_2.Q, PT := T#10S);
+IF Timer_2.Q THEN
+    FlowWarm := TRUE;
+    OnWarm := FALSE;
+ELSE
+    OnWarm := TRUE;
+    FlowWarm := FALSE;
+END_IF;
+
+// Network 12
+IF Pressure_4 THEN
+    OnWarm := TRUE;
+    OnStabilizer := FALSE;
+ELSE
+    OnStabilizer := TRUE;
+    OnWarm := FALSE;
+END_IF;
+
+// Network 13
+Timer_2(IN := NOT Timer_2.Q, PT := T#10S);
+IF Timer_2.Q THEN
+    OnStabilizer := TRUE;
+    FlowWarm := FALSE;
+ELSE
+    FlowWarm := TRUE;
+    OnStabilizer := FALSE;
+END_IF;
+
+// Network 14
+IF Level_3 THEN
+    OnWarm := TRUE;
+    FlowFridge_2 := FALSE;
+ELSE
+    FlowFridge_2 := TRUE;
+    OnWarm := FALSE;
+END_IF;
+
+// Network 15
+Timer_3(IN := NOT Timer_3.Q, PT := T#10S);
+IF Timer_3.Q THEN
+    FlowFridge_2 := TRUE;
+    OnFridge_2 := FALSE;
+ELSE
+    OnFridge_2 := TRUE;
+    FlowFridge_2 := FALSE;
+END_IF;
+
+// Network 16
+IF Pressure_5 THEN
+    OnFridge_2 := TRUE;
+    FlowE_1 := FALSE;
+ELSE
+    FlowE_1 := TRUE;
+    OnFridge_2 := FALSE;
+END_IF;
+
+// Network 17
+Timer_5(IN := NOT Timer_5.Q, PT := T#10S);
+IF Timer_5.Q THEN
+    FlowE_1 := TRUE;
+    OnCompressor := FALSE;
+    OnPurge := FALSE;
+ELSE
+    OnCompressor := TRUE;
+    OnPurge := TRUE;
+    FlowE_1 := FALSE;
+END_IF;
+
+// Network 18
+IF Pressure_6 THEN
+    OnCompressor := TRUE;
+    OnPurge := TRUE;
+    FlowFridge := FALSE;
+ELSE
+    FlowFridge := TRUE;
+    OnPurge := FALSE;
+    OnCompressor := FALSE;
+END_IF;
+
+// Network 19
+IF Temperature_4 THEN
+    FlowFridge := TRUE;
+    OnFridge := FALSE;
+ELSE
+    OnFridge := TRUE;
+    FlowFridge := FALSE;
+END_IF;
+
+// Network 20
+IF Pressure_7 THEN
+    OnFridge := TRUE;
+    FlowE_2 := FALSE;
+ELSE
+    FlowE_2 := TRUE;
+    OnFridge := FALSE;
+END_IF;
+
+// Network 21
+IF Pressure_8 THEN
+    FlowE_2 := TRUE;
+    OnSeparator := FALSE;
+ELSE
+    OnSeparator := TRUE;
+    FlowE_2 := FALSE;
+END_IF;
+
+// Network 22
+IF Timer_6.Q THEN
+    OnSeparator := TRUE;
+    FlowOffset := FALSE;
+ELSE
+    FlowOffset := TRUE;
+    OnSeparator := FALSE;
+END_IF;
+
+END_PROGRAM
